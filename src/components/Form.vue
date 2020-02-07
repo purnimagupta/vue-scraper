@@ -36,8 +36,8 @@
         </div>  
         <b-button type="submit" >Submit</b-button>
       </b-form>
-       <CompanyInfoTable :companyData="companyData"/>
     </b-card>
+    <CompanyInfoTable :companyData="companyData"/>
   </div>
 </template>
 
@@ -86,17 +86,36 @@ export default {
     onSubmit(evt) {
       evt.preventDefault()
         const { symbol, Period } = this.form;
-        // var that = this;
+
         const baseURI = 'http://localhost:3000/api/search'
-        console.log(`${baseURI}?symbol=${symbol}&&Period=${Period}`)
 
         this.$http.get(`${baseURI}?symbol=${symbol}&&Period=${Period}`)
           .then((result) => {
             console.log(result.data.data)
-            const data = JSON.parse(result.data.data)
-            this.companyData = data;
+            const formattedData = this.formatData(JSON.parse(result.data.data))
+            this.companyData = formattedData;
         })
     },
+    formatData(data) {     
+      for(var ele in data) {
+        var arr = data[ele].split('\n')
+        var tableData=[];
+        arr.map((val) => {
+          var obj = {};
+            if(val.includes(':')) {
+              var shortArr = val.split(':'); 
+              obj[shortArr[0]] = shortArr[1] ;
+              tableData.push(obj)          
+            }else {
+              tableData.push(val)        
+            }
+        })
+        data[ele] = tableData
+          
+      }  
+      console.log("data", data)
+      return data
+      },
     onCompanySelect (item) {
       this.selectedCompany = item
       this.form.symbol = item.text;

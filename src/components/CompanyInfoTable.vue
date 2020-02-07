@@ -1,16 +1,21 @@
 <template>
   <table class="table">
-    <tbody>   
+    <tbody >   
       <tr>
-        <th :key="value" v-for="(value, key) in companyData">{{key}}</th> 
+        <th :key="value" v-for="(value,key) in companyData">{{key}}</th> 
       </tr>    
       
       <tr >
-        <td :key="val" v-for="(val) in companyData">
+        <td :key="value" v-for="(value) in companyData">
           <table>
             <tbody>
-              <tr>
-                <td>{{val}}</td>
+              <tr v-for="(val) in value" :key="val" >
+                <template v-if="typeof(val) === 'object'">
+                  <td v-for="(v, k) in val" :key="v" ><b>{{k}}</b> - {{ v}}</td>
+                </template>
+                <template v-else>
+                  <td><h5><b>{{val}}</b></h5></td>
+                </template>
               </tr>
             
             </tbody>
@@ -23,7 +28,7 @@
 <script>
 
 export default {
-  name: 'CompanyInfoTable',
+  name: 'CompanyTable',
   props: {
     companyData: Object
   }   
@@ -33,13 +38,14 @@ export default {
 <style scoped>
   table {
   font-family: 'Open Sans', sans-serif;
+  /* width: 750px; */
   border-collapse: collapse;
+  /* border: 3px solid #44475C; */
   margin: 10px 10px 0 10px;
 }
 
 table th {
   text-transform: uppercase;
-  text-align: left;
   background: #44475C;
   color: #FFF;
   cursor: pointer;
@@ -60,3 +66,5 @@ table td:last-child {
 table tbody tr:nth-child(2n) td {
   background: #eaeef2;
 } 
+</style>
+
