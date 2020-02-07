@@ -36,6 +36,7 @@
         </div>  
         <b-button type="submit" >Submit</b-button>
       </b-form>
+       <CompanyInfoTable :companyData="companyData"/>
     </b-card>
   </div>
 </template>
@@ -43,11 +44,13 @@
 <script>
 
 import { BasicSelect } from 'vue-search-select';
+import CompanyInfoTable from './CompanyInfoTable';
 
 export default {
   name: 'Form',
   components: {
     BasicSelect,
+    CompanyInfoTable
   },
   data() {
     return {
@@ -83,7 +86,16 @@ export default {
     onSubmit(evt) {
       evt.preventDefault()
         const { symbol, Period } = this.form;
-        console.log(symbol, Period)
+        // var that = this;
+        const baseURI = 'http://localhost:3000/api/search'
+        console.log(`${baseURI}?symbol=${symbol}&&Period=${Period}`)
+
+        this.$http.get(`${baseURI}?symbol=${symbol}&&Period=${Period}`)
+          .then((result) => {
+            console.log(result.data.data)
+            const data = JSON.parse(result.data.data)
+            this.companyData = data;
+        })
     },
     onCompanySelect (item) {
       this.selectedCompany = item
